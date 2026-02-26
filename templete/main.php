@@ -1,18 +1,35 @@
 <?php
 session_start();
-// Mock session for demo - remove in production
-// $_SESSION['user_id'] = 1;
-// $_SESSION['user_name'] = 'สมชาย';
+require_once 'includes/db.php'; // เชื่อมต่อฐานข้อมูลจริง
+
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? '';
 
-// Mock activity data
-$activities = [
-    ['id' => 1, 'title' => 'ค่ายเชียนโปรแกรมพื้นฐาน', 'desc' => 'พื้นฐานสำคัญสำหรับนักพัฒนาโปรแกรมรุ่นใหม่ เรียนรู้ง่าย สนุกได้ความรู้', 'location' => 'กทม. IT4SU', 'tag' => 'โค้ด', 'slots' => 24],
-    ['id' => 2, 'title' => 'Openhouse', 'desc' => 'พื้นฐานสำคัญสำหรับนักพัฒนาโปรแกรมรุ่นใหม่ เรียนรู้ง่าย สนุกได้ความรู้', 'location' => 'กทม. IT4SU', 'tag' => 'โค้ด', 'slots' => 18],
-    ['id' => 3, 'title' => 'ค่ายเชียนโปรแกรมพื้นฐาน', 'desc' => 'พื้นฐานสำคัญสำหรับนักพัฒนาโปรแกรมรุ่นใหม่ เรียนรู้ง่าย สนุกได้ความรู้', 'location' => 'กทม. IT4SU', 'tag' => 'โค้ด', 'slots' => 30],
-    ['id' => 4, 'title' => 'ค่ายเชียนโปรแกรมพื้นฐาน', 'desc' => 'พื้นฐานสำคัญสำหรับนักพัฒนาโปรแกรมรุ่นใหม่ เรียนรู้ง่าย สนุกได้ความรู้', 'location' => 'กทม. IT4SU', 'tag' => 'โค้ด', 'slots' => 12],
-];
+// รับค่าค้นหาจาก URL (ถ้ามี)
+$search = trim($_GET['search'] ?? '');
+$date_start = $_GET['date_start'] ?? '';
+
+// สร้าง SQL พื้นฐาน
+$sql = "SELECT * FROM activities WHERE 1=1";
+$params = [];
+
+// ถ้ามีการกรอกช่องค้นหา
+if (!empty($search)) {
+    $sql .= " AND (title LIKE ? OR description LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+}
+
+// ถ้ามีการเลือกวันที่ (สมมติว่าใน DB มีคอลัมน์ start_date)
+if (!empty($date_start)) {
+    $sql .= " AND start_date >= ?";
+    $params[] = $date_start;
+}
+
+$sql .= " ORDER BY id DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="th">
@@ -478,26 +495,31 @@ $activities = [
 <main>
 
     <!-- SEARCH -->
-    <div class="search-section">
-        <div class="search-row">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="6" y2="12"/><line x1="3" y1="6" x2="6" y2="6"/><line x1="3" y1="18" x2="6" y2="18"/><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
-            <input type="text" class="search-input" placeholder="ค้นหากิจกรรม">
-            <button class="search-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </button>
-        </div>
-        <div class="search-divider"></div>
-        <div class="date-row">
-            <div class="date-field">
-                <span>วันที่เริ่มกิจกรรม :</span>
-                <input type="date">
-            </div>
-            <div class="date-field">
-                <span>วันที่เริ่มกิจกรรม :</span>
-                <input type="date">
-            </div>
-        </div>
+<form action="index.php" method="GET" class="search-section">
+    <div class="search-row">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="6" y2="12"/><line x1="3" y1="6" x2="6" y2="6"/><line x1="3" y1="18" x2="6" y2="18"/><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>
+        
+        <input type="text" name="search" class="search-input" 
+               placeholder="ค้นหากิจกรรม" 
+               value="<?= htmlspecialchars($search) ?>">
+        
+        <button type="submit" class="search-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
     </div>
+    
+    <div class="search-divider"></div>
+    
+    <div class="date-row">
+        <div class="date-field">
+            <span>วันที่เริ่มกิจกรรม :</span>
+            <input type="date" name="date_start" value="<?= htmlspecialchars($date_start) ?>">
+        </div>
+        <?php if(!empty($search) || !empty($date_start)): ?>
+            <a href="index.php" style="font-size: 12px; color: var(--text-soft); text-decoration: none;">✕ ล้างการค้นหา</a>
+        <?php endif; ?>
+    </div>
+</form>
 
     <!-- ACTIVITY CARDS -->
     <div class="section-header">
