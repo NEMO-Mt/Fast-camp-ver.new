@@ -31,6 +31,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
