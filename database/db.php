@@ -4,7 +4,7 @@
 $host = 'localhost';
 $db   = 'ชื่อฐานข้อมูลของคุณ';
 $user = 'root';
-$pass = ''; // ปกติ XAMPP จะว่างไว้ ถ้าเป็น MAMP ให้ใช้ 'root'
+$pass = ''; //  XAMPP จะว่างไว้ ถ้าเป็น MAMP ให้ใช้ 'root'
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
