@@ -2,9 +2,9 @@
 // includes/db.php
 
 $host = 'localhost';
-$db   = 'ชื่อฐานข้อมูลของคุณ';
-$user = 'root';
-$pass = ''; //  XAMPP จะว่างไว้ ถ้าเป็น MAMP ให้ใช้ 'root'
+$db   = 'fastcamp_db'; //ชื่อของ Database ที่สร้างไว้
+$user = 'caretaker';
+$pass = 'c123456';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
