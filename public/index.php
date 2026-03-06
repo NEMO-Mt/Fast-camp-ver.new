@@ -1,16 +1,12 @@
-<?php 
+<?php
 
 declare(strict_types=1);
-sesstion_start();
+session_start();
 
 // กำหนดค่าคงที่สำหรับไดเรกทอรีต่างๆ ในโปรเจค
-// กำหนดทางลัดไปหาโฟลเดอร์ที่เก็บไฟล์ระบบหลัก
 const INCLUDES_DIR = __DIR__ . '/../includes';
-// กำหนดทางลัดไปหาโฟลเดอร์ที่เก็บ Logic ของแต่ละหน้า
 const ROUTE_DIR = __DIR__ . '/../routes';
-// กำหนดทางลัดไปหาโฟลเดอร์ที่เก็บไฟล์ HTML/หน้าตาเว็บ
 const TEMPLATES_DIR = __DIR__ . '/../templates';
-// กำหนดทางลัดไปหาโฟลเดอร์ที่เกี่ยวข้องกับฐานข้อมูล
 const DATABASES_DIR = __DIR__ . '/../databases';
 
 // รวมไฟล์ที่จำเป็น เข้ามาใช้งานใน index.php
@@ -19,6 +15,7 @@ require_once INCLUDES_DIR . '/view.php';
 require_once INCLUDES_DIR . '/database.php';
 
 // เรียก database ฟังก์ชันเพื่อเชื่อมต่อฐานข้อมูล (ถ้าจำเป็น)
+
 
 
 // ทุกครั้งที่มีการร้องขอเข้ามา ให้เรียกใช้ฟังก์ชัน dispatch
